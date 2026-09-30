@@ -1,3 +1,6 @@
+### v1.0.0-preview.27 - 01 October 2026
+* Move to standard actions instead of softprops
+
 ### v1.0.0-preview.26 - 23 August 2026
 * Change: Updated `DataverseConnection` to 1.2.5, which fixes the persistent token store on Linux
 
