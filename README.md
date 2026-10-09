@@ -944,4 +944,4 @@ For issues, questions, or contributions, please visit the [GitHub repository](ht
 
 ---
 
-**Copyright (c) 2026 Context& A/S**
+**Copyright (c) 2025-2026 Context& A/S**
