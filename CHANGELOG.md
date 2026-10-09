@@ -1,3 +1,6 @@
+### Unreleased
+* Add: `--assembly-name` (`--plugin-name`, `--an`) on the `identity` and root commands, and `"AssemblyName"` on an `Identity` sync item. Managed identity handling only needs the name of the assembly as registered in Dataverse, so the local DLL no longer has to be carried along just to derive it
+
 ### v1.0.0-preview.27 - 01 October 2026
 * Move to standard actions instead of softprops
 

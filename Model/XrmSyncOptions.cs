@@ -132,7 +132,7 @@ public enum IdentityOperation
 	Ensure
 }
 
-public record IdentitySyncItem(IdentityOperation? Operation = null, string? AssemblyPath = null, string ClientId = "", string TenantId = "") : SyncItem
+public record IdentitySyncItem(IdentityOperation? Operation = null, string? AssemblyPath = null, string ClientId = "", string TenantId = "", string? AssemblyName = null) : SyncItem
 {
 	public const string TypeName = "Identity";
 	public static IdentitySyncItem Empty => new();

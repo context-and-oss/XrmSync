@@ -86,7 +86,7 @@ internal partial class XrmSyncConfigurationValidator(IOptions<XrmSyncConfigurati
 	private static IEnumerable<string> Validate(IdentitySyncItem syncItem, ProfileConfiguration profile)
 	{
 		var errors = new List<string>();
-		errors.AddRange(ValidateAssemblyPath(profile.ResolveAssemblyPath(syncItem.AssemblyPath) ?? string.Empty));
+		errors.AddRange(ValidateAssemblyReference(profile.ResolveAssemblyPath(syncItem.AssemblyPath), syncItem.AssemblyName));
 		errors.AddRange(ValidateSolutionName(profile.ResolveSolutionName(syncItem)));
 
 		if (syncItem.Operation == null)
@@ -147,6 +147,31 @@ internal partial class XrmSyncConfigurationValidator(IOptions<XrmSyncConfigurati
 		if (!File.Exists(Path.GetFullPath(assemblyPath)))
 		{
 			yield return $"Assembly file does not exist: {assemblyPath}";
+		}
+	}
+
+	/// <summary>
+	/// Validates how the plugin assembly is identified when only its name is needed. An explicit
+	/// assembly name is enough on its own — no local file has to exist — otherwise the assembly path
+	/// must point at an existing .dll. Callers resolve the validated pair into an
+	/// <see cref="Model.Identity.AssemblyReference"/>.
+	/// </summary>
+	internal static IEnumerable<string> ValidateAssemblyReference(string? assemblyPath, string? assemblyName)
+	{
+		if (!string.IsNullOrWhiteSpace(assemblyName))
+		{
+			yield break;
+		}
+
+		if (string.IsNullOrWhiteSpace(assemblyPath))
+		{
+			yield return "Assembly name or assembly path is required. Specify --assembly-name, or --assembly pointing at the local assembly.";
+			yield break;
+		}
+
+		foreach (var error in ValidateAssemblyPath(assemblyPath))
+		{
+			yield return error;
 		}
 	}
 
