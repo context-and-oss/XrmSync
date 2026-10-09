@@ -201,7 +201,7 @@ Uses the `DataverseConnection` NuGet package for authentication. Supports:
 - Connection strings
 - Interactive authentication
 
-See [DataverseConnection docs](https://github.com/delegateas/DataverseConnection) for details.
+See [DataverseConnection docs](https://github.com/context-and-oss/DataverseConnection) for details.
 
 ## Development Guidelines
 

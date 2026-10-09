@@ -1,8 +1,8 @@
 # XrmSync
 
-[![Build Status](https://img.shields.io/github/actions/workflow/status/delegateas/XrmSync/ci.yml)](https://github.com/delegateas/XrmSync/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/context-and-oss/XrmSync/ci.yml)](https://github.com/context-and-oss/XrmSync/actions)
 [![NuGet](https://img.shields.io/nuget/v/XrmSync.svg)](https://www.nuget.org/packages/XrmSync)
-[![GitHub release](https://img.shields.io/github/release/delegateas/XrmSync.svg)](https://github.com/delegateas/XrmSync/releases)
+[![GitHub release](https://img.shields.io/github/release/context-and-oss/XrmSync.svg)](https://github.com/context-and-oss/XrmSync/releases)
 [![.NET](https://img.shields.io/badge/.NET-10.0-blue.svg)](https://dotnet.microsoft.com/download/dotnet/10.0)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -44,7 +44,7 @@ dotnet tool install --local XrmSync
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/delegateas/XrmSync.git
+git clone https://github.com/context-and-oss/XrmSync.git
 cd XrmSync
 ```
 
@@ -777,7 +777,7 @@ xrmsync plugins --assembly "MyPlugin.dll" --solution-name "MyCustomSolution" --d
 ### Dataverse Connection
 
 XrmSync utilizes the Dataverse Connection NuGet package to manage connections to your Dataverse environment.
-See the [Dataverse Connection documentation](https://github.com/delegateas/DataverseConnection) for more details on how to configure connections.
+See the [Dataverse Connection documentation](https://github.com/context-and-oss/DataverseConnection) for more details on how to configure connections.
 
 ### Option Priority
 
@@ -940,7 +940,7 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 
 ## Support
 
-For issues, questions, or contributions, please visit the [GitHub repository](https://github.com/delegateas/XrmSync).
+For issues, questions, or contributions, please visit the [GitHub repository](https://github.com/context-and-oss/XrmSync).
 
 ---
 

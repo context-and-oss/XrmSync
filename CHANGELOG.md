@@ -1,5 +1,9 @@
-### Unreleased
+_v1.0.1 is the first stable release of XrmSync — all preceding `v1.0.0-preview.*` versions were pre-releases._
+
+### v1.0.1 - 09 October 2026
 * Add: `--assembly-name` (`--plugin-name`, `--an`) on the `identity` and root commands, and `"AssemblyName"` on an `Identity` sync item. Managed identity handling only needs the name of the assembly as registered in Dataverse, so the local DLL no longer has to be carried along just to derive it
+* Change: The repository moved to https://github.com/context-and-oss/XrmSync — the package project URL, README badges, clone URLs and documentation links now point at the new org. The `DataverseConnection` links moved with it
+* Change: Copyright updated to 2026, and the license holder corrected from Delegate A/S to Context& A/S
 
 ### v1.0.0-preview.27 - 01 October 2026
 * Move to standard actions instead of softprops

@@ -18,7 +18,7 @@ XrmSync is a .NET 8 command-line tool for synchronizing Microsoft Dataverse plug
 
 - The [README.md](README.md) for basic usage
 - The [CLAUDE.md](CLAUDE.md) for detailed architecture and development guidelines
-- The project's [GitHub Issues](https://github.com/delegateas/XrmSync/issues) for open tasks
+- The project's [GitHub Issues](https://github.com/context-and-oss/XrmSync/issues) for open tasks
 
 ## Development Setup
 
@@ -31,7 +31,7 @@ XrmSync is a .NET 8 command-line tool for synchronizing Microsoft Dataverse plug
 ### Clone the Repository
 
 ```bash
-git clone https://github.com/delegateas/XrmSync.git
+git clone https://github.com/context-and-oss/XrmSync.git
 cd XrmSync
 ```
 
@@ -102,7 +102,7 @@ dotnet tool install --global --add-source ./XrmSync/nupkg XrmSync
 
 ### Before You Start
 
-1. Check [existing issues](https://github.com/delegateas/XrmSync/issues) to avoid duplicate work
+1. Check [existing issues](https://github.com/context-and-oss/XrmSync/issues) to avoid duplicate work
 2. For major changes, open an issue first to discuss the approach
 3. Fork the repository and create a feature branch from `main`
 
@@ -226,7 +226,7 @@ Fixes #123
 
 ## Questions or Issues?
 
-- Open an [issue](https://github.com/delegateas/XrmSync/issues) for bugs or feature requests
+- Open an [issue](https://github.com/context-and-oss/XrmSync/issues) for bugs or feature requests
 - Check the [CLAUDE.md](CLAUDE.md) for detailed architecture documentation
 - Review existing issues and PRs for similar discussions
 
