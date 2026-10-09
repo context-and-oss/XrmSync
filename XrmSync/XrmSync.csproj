@@ -11,11 +11,11 @@
 		<RootNamespace>$(MSBuildProjectName.Replace(" ", "_"))</RootNamespace>
 		<AssemblyName>$(MSBuildProjectName)</AssemblyName>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
-		<PackageProjectUrl>https://github.com/delegateas/XrmSync</PackageProjectUrl>
+		<PackageProjectUrl>https://github.com/context-and-oss/XrmSync</PackageProjectUrl>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageIcon>delegate.png</PackageIcon>
 		<Description>A command-line tool for synchronizing Dataverse plugins and custom APIs with your local plugin assemblies.</Description>
-		<Copyright>©2025 Context&amp; A/S</Copyright>
+		<Copyright>©2026 Context&amp; A/S</Copyright>
 		<Company>Context&amp; A/S</Company>
 		<Authors>Context&amp;</Authors>
 	</PropertyGroup>
