@@ -57,3 +57,4 @@ test-outputs/
 
 # Claude files
 .claude/*.local.json
+.claude/statusline.sh
