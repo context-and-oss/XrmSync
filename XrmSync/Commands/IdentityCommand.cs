@@ -16,6 +16,7 @@ internal class IdentityCommand : XrmSyncCommandBase
 	{
 		Add(CommandOptions.Operation);
 		Add(CommandOptions.Assembly);
+		Add(CommandOptions.AssemblyName);
 		Add(CommandOptions.ClientId);
 		Add(CommandOptions.TenantId);
 
@@ -38,6 +39,7 @@ internal class IdentityCommand : XrmSyncCommandBase
 		return await RunCore(
 			identity.Operation.Value,
 			identity.AssemblyPath ?? string.Empty,
+			identity.AssemblyName,
 			ctx.SolutionName ?? string.Empty,
 			identity.ClientId,
 			identity.TenantId,
@@ -52,14 +54,15 @@ internal class IdentityCommand : XrmSyncCommandBase
 	{
 		var operationValue = parseResult.GetValue(CommandOptions.Operation);
 		var assemblyPath = parseResult.GetValue(CommandOptions.Assembly);
+		var assemblyName = parseResult.GetValue(CommandOptions.AssemblyName);
 		var clientIdValue = parseResult.GetValue(CommandOptions.ClientId);
 		var tenantIdValue = parseResult.GetValue(CommandOptions.TenantId);
 		var solutionName = parseResult.GetValue(CommandOptions.Solution);
 		var (dryRun, ciMode, logLevel, profileName) = ReadExecutionOverrides(parseResult);
 
 		var (profile, exitCode) = ResolveCommandProfile(profileName,
-			!string.IsNullOrWhiteSpace(assemblyPath) && !string.IsNullOrWhiteSpace(solutionName),
-			"Specify --assembly and --solution, or add a profile to appsettings.json.");
+			(!string.IsNullOrWhiteSpace(assemblyPath) || !string.IsNullOrWhiteSpace(assemblyName)) && !string.IsNullOrWhiteSpace(solutionName),
+			"Specify --assembly or --assembly-name together with --solution, or add a profile to appsettings.json.");
 		if (exitCode.HasValue) return exitCode.Value;
 
 		// Sync item is optional — its assembly path and solution name fall back to the profile-level shared values.
@@ -72,6 +75,7 @@ internal class IdentityCommand : XrmSyncCommandBase
 
 		var finalOperation = operationValue ?? item?.Operation;
 		var finalAssemblyPath = assemblyPath.GetValueOrDefault(profile?.ResolveAssemblyPath(item?.AssemblyPath) ?? string.Empty);
+		var finalAssemblyName = assemblyName.GetValueOrDefault(item?.AssemblyName ?? string.Empty);
 		var finalSolutionName = solutionName.GetValueOrDefault(profile?.ResolveSolutionName(item) ?? string.Empty);
 		var finalClientId = clientIdValue.GetValueOrDefault(item?.ClientId ?? string.Empty);
 		var finalTenantId = tenantIdValue.GetValueOrDefault(item?.TenantId ?? string.Empty);
@@ -82,7 +86,7 @@ internal class IdentityCommand : XrmSyncCommandBase
 		if (finalOperation == null)
 			errors.Add("Operation is required. Specify 'Remove' or 'Ensure' via --operation.");
 
-		errors.AddRange(XrmSyncConfigurationValidator.ValidateAssemblyPath(finalAssemblyPath));
+		errors.AddRange(XrmSyncConfigurationValidator.ValidateAssemblyReference(finalAssemblyPath, finalAssemblyName));
 		errors.AddRange(XrmSyncConfigurationValidator.ValidateSolutionName(finalSolutionName));
 
 		if (finalOperation == IdentityOperation.Ensure)
@@ -94,12 +98,13 @@ internal class IdentityCommand : XrmSyncCommandBase
 		if (errors.Count > 0)
 			return ValidationError($"identity --operation {finalOperation?.ToString() ?? "<none>"}", errors);
 
-		return await RunCore(finalOperation!.Value, finalAssemblyPath, finalSolutionName, finalClientId, finalTenantId, dryRun, ciMode, logLevel, profileName, cancellationToken);
+		return await RunCore(finalOperation!.Value, finalAssemblyPath, finalAssemblyName, finalSolutionName, finalClientId, finalTenantId, dryRun, ciMode, logLevel, profileName, cancellationToken);
 	}
 
 	private async Task<int> RunCore(
 		IdentityOperation operation,
 		string assemblyPath,
+		string? assemblyName,
 		string solutionName,
 		string clientId,
 		string tenantId,
@@ -111,7 +116,7 @@ internal class IdentityCommand : XrmSyncCommandBase
 	{
 		// Validate resolved values (when called from ExecuteAsync, validation already done above)
 		var errors = new List<string>();
-		errors.AddRange(XrmSyncConfigurationValidator.ValidateAssemblyPath(assemblyPath));
+		errors.AddRange(XrmSyncConfigurationValidator.ValidateAssemblyReference(assemblyPath, assemblyName));
 		errors.AddRange(XrmSyncConfigurationValidator.ValidateSolutionName(solutionName));
 
 		if (operation == IdentityOperation.Ensure)
@@ -123,11 +128,14 @@ internal class IdentityCommand : XrmSyncCommandBase
 		if (errors.Count > 0)
 			return ValidationError($"identity --operation {operation}", errors);
 
+		// Validated above, so exactly one of name/path is present.
+		var assembly = AssemblyReference.Create(assemblyName, assemblyPath);
+
 		var serviceProvider = new ServiceCollection()
 			.AddIdentityService()
 			.AddXrmSyncConfiguration(new ExecutionContext(null, null, null, null, profileName))
 			.AddOptions(dryRun, ciMode, logLevel)
-			.AddSingleton(MSOptions.Create(new IdentityCommandOptions(operation, assemblyPath, solutionName, clientId, tenantId)))
+			.AddSingleton(MSOptions.Create(new IdentityCommandOptions(operation, assembly, solutionName, clientId, tenantId)))
 			.AddLogger()
 			.BuildServiceProvider();
 

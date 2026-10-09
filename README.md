@@ -168,6 +168,7 @@ The root command accepts the following override options in addition to `--dry-ru
 | Option | Applies to |
 |--------|-----------|
 | `--assembly` | Plugin sync, Plugin analysis, Identity |
+| `--assembly-name` | Identity |
 | `--solution` | All sync types |
 | `--folder` | Webresource sync |
 | `--file-extensions` | Webresource sync |
@@ -278,12 +279,18 @@ xrmsync identity --operation Ensure --assembly "path/to/your/plugin.dll" --solut
 xrmsync identity --operation Remove --assembly "path/to/your/plugin.dll" --solution-name "YourSolutionName"
 ```
 
+Managed identity handling only needs the *name* of the assembly as registered in Dataverse — the assembly is never analyzed. Use `--assembly-name` instead of `--assembly` when the local DLL isn't available (for example in a release pipeline that only deploys configuration):
+```bash
+xrmsync identity --operation Ensure --assembly-name "MyPlugin" --solution-name "YourSolutionName" --client-id "<azure-app-client-id>" --tenant-id "<azure-tenant-id>"
+```
+
 #### Identity Command Options
 
 | Option | Short | Description | Required |
 |--------|-------|-------------|----------|
 | `--operation` | `-o`, `--op` | Operation to perform: `Ensure` or `Remove` | Yes |
 | `--assembly` | `-a` | Path to the plugin assembly (*.dll) | Yes* |
+| `--assembly-name` | `--plugin-name`, `--an` | Name of the plugin assembly as registered in Dataverse. Use instead of `--assembly` when the local DLL isn't available | Yes* |
 | `--solution-name` | `-n` | Name of the target Dataverse solution | Yes* |
 | `--client-id` | `--cid` | Azure AD application (client) ID for the managed identity | Yes (Ensure only) |
 | `--tenant-id` | `--tid` | Azure AD tenant ID for the managed identity | Yes (Ensure only) |
@@ -292,9 +299,9 @@ xrmsync identity --operation Remove --assembly "path/to/your/plugin.dll" --solut
 | `--ci-mode` | `--ci` | Enable CI mode which prefixes all warnings and errors | No |
 | `--profile` | `-p`, `--profile-name` | Name of the profile to load from appsettings.json | No |
 
-*Required when not present in appsettings.json
+*Required when not present in appsettings.json. `--assembly` and `--assembly-name` are alternatives — supply one of them; `--assembly-name` wins when both are given.
 
-> **Note**: The `--assembly` option is used to locate the plugin assembly that is already registered in Dataverse. `Ensure` is idempotent — if a managed identity is already linked and matches the supplied client/tenant, no change is made; if it has drifted, the existing record is updated in place (it is never deleted by `Ensure`). `Remove` does not fail when the assembly cannot be found — it logs a warning and exits successfully, so it's safe to run in teardown pipelines.
+> **Note**: The `--assembly`/`--assembly-name` option is used to locate the plugin assembly that is already registered in Dataverse. Only the assembly name is used, so `--assembly-name` avoids having to carry the DLL around just to derive it. `Ensure` is idempotent — if a managed identity is already linked and matches the supplied client/tenant, no change is made; if it has drifted, the existing record is updated in place (it is never deleted by `Ensure`). `Remove` does not fail when the assembly cannot be found — it logs a warning and exits successfully, so it's safe to run in teardown pipelines.
 
 ### Assembly Analysis
 
@@ -542,6 +549,7 @@ Each sync item must have a `Type` property indicating the sync type. In addition
 | `Type` | string | Must be "Identity" | Required |
 | `Operation` | string | Operation to perform: `Ensure` or `Remove` | Required |
 | `AssemblyPath` | string | Path to the plugin assembly (*.dll) | Profile-level `AssemblyPath` |
+| `AssemblyName` | string | Name of the plugin assembly as registered in Dataverse. Takes precedence over `AssemblyPath`, which then isn't needed at all | null |
 | `SolutionName` | string | Target Dataverse solution for this item | Profile-level `SolutionName` |
 | `ClientId` | string | Azure AD application (client) ID (GUID) | Required for Ensure |
 | `TenantId` | string | Azure AD tenant ID (GUID) | Required for Ensure |

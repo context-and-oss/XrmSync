@@ -19,7 +19,7 @@ internal class IdentitySyncService(
 	public Task Sync(CancellationToken cancellation)
 	{
 		log.LogInformation("{operation} managed identity for assembly '{assemblyName}'",
-			options.Operation, Path.GetFileNameWithoutExtension(options.AssemblyPath));
+			options.Operation, options.Assembly.Name);
 
 		return options.Operation switch
 		{
@@ -31,7 +31,7 @@ internal class IdentitySyncService(
 
 	private Task Remove()
 	{
-		var assemblyName = Path.GetFileNameWithoutExtension(options.AssemblyPath);
+		var assemblyName = options.Assembly.Name;
 		log.LogInformation("Removing managed identity for assembly '{assemblyName}' in solution '{solutionName}'",
 			assemblyName, options.SolutionName);
 
@@ -52,7 +52,7 @@ internal class IdentitySyncService(
 
 	private Task Ensure()
 	{
-		var assemblyName = Path.GetFileNameWithoutExtension(options.AssemblyPath);
+		var assemblyName = options.Assembly.Name;
 		log.LogInformation("Ensuring managed identity for assembly '{assemblyName}' in solution '{solutionName}'",
 			assemblyName, options.SolutionName);
 

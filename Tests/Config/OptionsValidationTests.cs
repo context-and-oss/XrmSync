@@ -520,7 +520,31 @@ public class OptionsValidationTests
 			Options.Create(CreateSharedOptions()));
 		var exception = Assert.Throws<XrmSync.Model.Exceptions.OptionsValidationException>(
 			() => validator.Validate(ConfigurationScope.Identity));
-		Assert.Contains("Assembly path is required", exception.Message);
+		Assert.Contains("Assembly name or assembly path is required", exception.Message);
+	}
+
+	[Fact]
+	public void IdentityValidatorAssemblyNameWithoutAssemblyPathPassesValidation()
+	{
+		// Arrange - managed identity handling only needs the registered assembly name, so no local file is required
+		var config = new XrmSyncConfiguration(
+			DryRun: false,
+			LogLevel: LogLevel.Information,
+			CiMode: false,
+			Profiles: new List<ProfileConfiguration>
+			{
+				new("default", "TestSolution", new List<SyncItem>
+				{
+					new IdentitySyncItem(IdentityOperation.Remove, AssemblyName: "MyPlugin")
+				})
+			}
+		);
+
+		// Act & Assert
+		var validator = new XrmSyncConfigurationValidator(
+			Options.Create(config),
+			Options.Create(CreateSharedOptions()));
+		validator.Validate(ConfigurationScope.Identity);
 	}
 
 	[Fact]

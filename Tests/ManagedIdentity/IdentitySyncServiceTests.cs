@@ -24,11 +24,11 @@ public class IdentitySyncServiceTests
 	private IdentitySyncService CreateService(
 		IdentityOperation operation = IdentityOperation.Remove,
 		string? assemblyPath = null, string? solutionName = null,
-		string? clientId = null, string? tenantId = null)
+		string? clientId = null, string? tenantId = null, string? assemblyName = null)
 	{
 		var options = new IdentityCommandOptions(
 			operation,
-			assemblyPath ?? AssemblyPath,
+			AssemblyReference.Create(assemblyName, assemblyPath ?? AssemblyPath),
 			solutionName ?? SolutionName,
 			clientId ?? string.Empty,
 			tenantId ?? string.Empty);
@@ -39,6 +39,47 @@ public class IdentitySyncServiceTests
 			managedIdentityService,
 			Options.Create(options),
 			logger);
+	}
+
+	// --- Assembly name resolution tests ---
+
+	[Fact]
+	public async Task AssemblyNameIsUsedWhenNoAssemblyPathIsSupplied()
+	{
+		// Arrange
+		var miRef = new EntityReference("managedidentity", Guid.NewGuid());
+
+		solutionReader.RetrieveSolution(SolutionName).Returns((solutionId, "test"));
+		managedIdentityReader.GetPluginAssemblyManagedIdentity(solutionId, "RemoteOnlyPlugin")
+			.Returns((Guid.NewGuid(), miRef));
+
+		var service = CreateService(IdentityOperation.Remove, assemblyPath: string.Empty, assemblyName: "RemoteOnlyPlugin");
+
+		// Act
+		await service.Sync(CancellationToken.None);
+
+		// Assert
+		managedIdentityService.Received(1).Remove(miRef, "RemoteOnlyPlugin");
+	}
+
+	[Fact]
+	public async Task AssemblyNameTakesPrecedenceOverAssemblyPath()
+	{
+		// Arrange
+		var miRef = new EntityReference("managedidentity", Guid.NewGuid());
+
+		solutionReader.RetrieveSolution(SolutionName).Returns((solutionId, "test"));
+		managedIdentityReader.GetPluginAssemblyManagedIdentity(solutionId, "OverriddenName")
+			.Returns((Guid.NewGuid(), miRef));
+
+		var service = CreateService(IdentityOperation.Remove, assemblyName: "OverriddenName");
+
+		// Act
+		await service.Sync(CancellationToken.None);
+
+		// Assert — the name from the path ("MyPlugin") is never looked up
+		managedIdentityReader.DidNotReceive().GetPluginAssemblyManagedIdentity(solutionId, "MyPlugin");
+		managedIdentityService.Received(1).Remove(miRef, "OverriddenName");
 	}
 
 	// --- Remove operation tests ---

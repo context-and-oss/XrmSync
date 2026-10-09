@@ -25,6 +25,7 @@ internal class XrmSyncRootCommand : XrmSyncCommandBase
 		Add(CommandOptions.CiMode);
 		Add(CommandOptions.LogLevel);
 		Add(CommandOptions.Assembly);
+		Add(CommandOptions.AssemblyName);
 		Add(CommandOptions.Solution);
 		Add(CommandOptions.Folder);
 		Add(CommandOptions.FileExtensions);
@@ -44,6 +45,7 @@ internal class XrmSyncRootCommand : XrmSyncCommandBase
 	{
 		var (dryRunOverride, ciModeOverride, logLevelOverride, profileName) = ReadExecutionOverrides(parseResult);
 		var assemblyOverride = parseResult.GetValue(CommandOptions.Assembly);
+		var assemblyNameOverride = parseResult.GetValue(CommandOptions.AssemblyName);
 		var solutionOverride = parseResult.GetValue(CommandOptions.Solution);
 		var folderOverride = parseResult.GetValue(CommandOptions.Folder);
 		var fileExtensionsOverride = parseResult.GetValue(CommandOptions.FileExtensions);
@@ -110,6 +112,7 @@ internal class XrmSyncRootCommand : XrmSyncCommandBase
 			{
 				Operation = operationOverride ?? identity.Operation,
 				AssemblyPath = ResolveAssembly(identity.AssemblyPath),
+				AssemblyName = assemblyNameOverride.GetValueOrDefault(identity.AssemblyName ?? string.Empty),
 				ClientId = clientIdOverride.GetValueOrDefault(identity.ClientId),
 				TenantId = tenantIdOverride.GetValueOrDefault(identity.TenantId),
 				SolutionName = ResolveSolution(identity)

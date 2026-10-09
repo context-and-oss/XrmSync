@@ -14,6 +14,14 @@ internal static class CliOptions
 		Arity: System.CommandLine.ArgumentArity.ZeroOrOne);
 
 	/// <summary>
+	/// Name of the plugin assembly as registered in Dataverse, used instead of a local assembly file
+	/// </summary>
+	public static readonly CliOptionDescriptor AssemblyName = new(
+		"--assembly-name", ["--plugin-name", "--an"],
+		"Name of the plugin assembly as registered in Dataverse. Use instead of --assembly when the local assembly file is not needed (managed identity handling only needs the name)",
+		Arity: System.CommandLine.ArgumentArity.ZeroOrOne);
+
+	/// <summary>
 	/// Allow empty plugin types (keep types that no longer have steps instead of deleting them)
 	/// </summary>
 	public static readonly CliOptionDescriptor AllowEmptyTypes = new(

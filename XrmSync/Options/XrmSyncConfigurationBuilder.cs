@@ -133,7 +133,8 @@ internal class XrmSyncConfigurationBuilder(IConfiguration configuration) : IConf
 			operation,
 			itemSection.GetValue<string>(nameof(IdentitySyncItem.AssemblyPath)),
 			itemSection.GetValue<string>(nameof(IdentitySyncItem.ClientId)) ?? string.Empty,
-			itemSection.GetValue<string>(nameof(IdentitySyncItem.TenantId)) ?? string.Empty
+			itemSection.GetValue<string>(nameof(IdentitySyncItem.TenantId)) ?? string.Empty,
+			itemSection.GetValue<string>(nameof(IdentitySyncItem.AssemblyName))
 		);
 	}
 

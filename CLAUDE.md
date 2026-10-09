@@ -94,7 +94,7 @@ The solution is organized into distinct layers with clear separation of concerns
 - Reconcile semantics (shared `IManagedIdentityReconciler`):
   - **Ensure**: creates and links a new identity when none is bound, or **updates the existing record in place** (application id, tenant id, name) when it has drifted — it does not delete identities
   - **Remove** (standalone `identity --operation Remove`): deletes the linked identity; a missing assembly logs a warning instead of failing
-- The standalone `identity` command remains available for explicit Ensure/Remove operations
+- The standalone `identity` command remains available for explicit Ensure/Remove operations. It only ever needs the **assembly name**, never the assembly itself, so `--assembly-name` (or `"AssemblyName"` on an `Identity` sync item) can replace `--assembly`/`AssemblyPath` entirely. `AssemblyReference` (in `Model/Identity/`) is the resolved, validated form the service layer consumes — a one-of over the two inputs whose `Name` is always populated, built by `AssemblyReference.Create` (explicit name wins, otherwise derived from the path). `IdentityCommandOptions` holds it non-nullably, so `IdentitySyncService` never has to re-derive or null-check. The nullable pair survives only in the config/CLI layer, where both are genuinely optional: `IdentitySyncItem.AssemblyPath`/`AssemblyName` and `XrmSyncConfigurationValidator.ValidateAssemblyReference`, which accepts either and only applies the existing-`.dll` check when no name is given
 - The identity is named `"{SolutionName} Managed Identity"` and is linked via the `PluginAssembly.ManagedIdentityId` lookup
 
 **Watch Mode**:

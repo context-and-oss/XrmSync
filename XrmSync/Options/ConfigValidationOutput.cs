@@ -300,7 +300,10 @@ internal class ConfigValidationOutput(
 				break;
 			case IdentitySyncItem identity:
 				Console.WriteLine($"      Operation: {identity.Operation}");
-				Console.WriteLine($"      Assembly Path: {profile.ResolveAssemblyPath(identity.AssemblyPath)}");
+				if (!string.IsNullOrWhiteSpace(identity.AssemblyName))
+					Console.WriteLine($"      Assembly Name: {identity.AssemblyName}");
+				else
+					Console.WriteLine($"      Assembly Path: {profile.ResolveAssemblyPath(identity.AssemblyPath)}");
 				Console.WriteLine($"      Solution Name: {profile.ResolveSolutionName(identity)}");
 				if (identity.Operation == IdentityOperation.Ensure)
 				{
@@ -331,7 +334,7 @@ internal class ConfigValidationOutput(
 
 	private static List<string> ValidateIdentity(IdentitySyncItem identity, ProfileConfiguration profile)
 	{
-		var errors = new List<string>(XrmSyncConfigurationValidator.ValidateAssemblyPath(profile.ResolveAssemblyPath(identity.AssemblyPath) ?? string.Empty));
+		var errors = new List<string>(XrmSyncConfigurationValidator.ValidateAssemblyReference(profile.ResolveAssemblyPath(identity.AssemblyPath), identity.AssemblyName));
 		errors.AddRange(XrmSyncConfigurationValidator.ValidateSolutionName(profile.ResolveSolutionName(identity)));
 
 		if (identity.Operation == IdentityOperation.Ensure)
